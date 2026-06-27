@@ -84,6 +84,20 @@ End Function
 
 
 '======================================================================================='
+' YAML ESCAPING
+Public Function EscapeYaml(ByVal s As String) As String
+    ' Escapes a string so it is safe inside a double-quoted YAML scalar.
+    ' Without this, an attacker-controlled display name or subject containing a
+    ' double quote could break out of the frontmatter value and inject keys.
+    ' Order matters: escape backslashes before quotes.
+    s = Replace(s, "\", "\\")
+    s = Replace(s, Chr(34), "\" & Chr(34))
+    s = Replace(s, vbCr, " ")
+    s = Replace(s, vbLf, " ")
+    s = Replace(s, vbTab, " ")
+    EscapeYaml = s
+End Function
+'======================================================================================='
 ' STRING CLEANING SUBROUTINE
 Public Sub ReplaceCharsForFileName(temporarySubjectLineString As String, sChr As String)
     ' This just cleans the Email subject line of invalid characters
@@ -97,6 +111,14 @@ Public Sub ReplaceCharsForFileName(temporarySubjectLineString As String, sChr As
     temporarySubjectLineString = Replace(temporarySubjectLineString, "|", sChr)
     temporarySubjectLineString = Replace(temporarySubjectLineString, "[", sChr)
     temporarySubjectLineString = Replace(temporarySubjectLineString, "]", sChr)
+    ' `*` is also illegal in Windows file names
+    temporarySubjectLineString = Replace(temporarySubjectLineString, "*", sChr)
+    ' Windows silently drops trailing dots/spaces, which causes surprising
+    ' "file not found" mismatches between the saved name and the Obsidian URI.
+    Do While Len(temporarySubjectLineString) > 0 And _
+        (Right(temporarySubjectLineString, 1) = "." Or Right(temporarySubjectLineString, 1) = " ")
+        temporarySubjectLineString = Left(temporarySubjectLineString, Len(temporarySubjectLineString) - 1)
+    Loop
 End Sub
 '======================================================================================='
 Public Function formatName(str As String, personNameStartChar As String) As String
