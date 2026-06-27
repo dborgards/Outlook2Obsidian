@@ -1,0 +1,28 @@
+# Outlook2Obsidian export configuration.
+# Copy this file to "config.txt" (next to o2o-export.exe) and edit the values.
+# Lines starting with '#' are comments. Format is Key=Value.
+
+# Absolute folder the .md notes are written to. A trailing backslash is optional.
+VaultPath=C:\Users\YourUsername\Obsidian\Vault\Emails\
+
+# Prefix used in [[wikilinks]] for people, e.g. "@" -> [[@John Doe]].
+PersonNameStartChar=@
+
+# Prefix for generated file names, e.g. "Email_2026-06-27 1347 Subject.md".
+FileNamePrefix=Email_
+
+# Which folder to export:
+#   Inbox | SentMail | Drafts | Outbox | DeletedItems | JunkEmail
+# or a path under the default store, e.g. Inbox\Projects\ACME
+FolderPath=Inbox
+
+# Also export every subfolder of FolderPath (true/false).
+Recurse=false
+
+# Save attachments into an "attachments" subfolder and link them (true/false).
+IncludeAttachments=false
+
+# Wrap the email body in a fenced code block so Dataview/Templater code inside a
+# (possibly hostile) message renders as text instead of executing when the note
+# is opened in Obsidian. true = safer, false = nicer formatting.
+WrapBodyInCodeBlock=false

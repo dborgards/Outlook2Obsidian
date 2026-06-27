@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- .NET Framework 4.8 ships with every modern Windows, so the built exe
+         needs nothing installed on the target machine. -->
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>o2o-export</AssemblyName>
+    <RootNamespace>Outlook2Obsidian.Export</RootNamespace>
+    <!-- No external NuGet packages on purpose: a locked-down corporate build
+         box may have no package feed. Everything below uses the BCL + COM. -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The Outlook type library is read from the locally installed Outlook at
+         build time (build on a machine that has classic Outlook installed).
+         EmbedInteropTypes=true folds the interop types into the exe, so no
+         separate Microsoft.Office.Interop.Outlook.dll has to be shipped.
+
+         Guid is the Outlook Object Model type library. If the build complains
+         about the version, open "Add COM Reference" in Visual Studio, tick
+         "Microsoft Outlook XX.0 Object Library", and adjust VersionMajor/Minor
+         to match (Office 2016/2019/2021/365 = 9.x). -->
+    <COMReference Include="Microsoft.Office.Interop.Outlook">
+      <Guid>00062fff-0000-0000-c000-000000000046</Guid>
+      <VersionMajor>9</VersionMajor>
+      <VersionMinor>6</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+</Project>

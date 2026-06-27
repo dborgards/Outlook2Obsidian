@@ -1,0 +1,6 @@
+bin/
+obj/
+# Local runtime files (your real vault path and the export watermark).
+config.txt
+state.txt
+state.txt.tmp

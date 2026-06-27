@@ -84,14 +84,14 @@ Sub ExtractEmail()
         resultString = resultString & "class: email" & vbCrLf
         resultString = resultString & "area: " & vbCrLf
         resultString = resultString & "project: " & vbCrLf
-        resultString = resultString & "title: """ & temporarySubjectLineString & """" & vbCrLf
+        resultString = resultString & "title: """ & EscapeYaml(temporarySubjectLineString) & """" & vbCrLf
         resultString = resultString & "date: " & Format(oMail.ReceivedTime, "yyyy-MM-dd HH:mm") & vbCrLf
-        resultString = resultString & "from: """ & sender & """" & vbCrLf
+        resultString = resultString & "from: """ & EscapeYaml(sender) & """" & vbCrLf
 
         ' Convert recipients to YAML list
         resultString = resultString & "to:" & vbCrLf
         For Each recip In recips
-            resultString = resultString & "  - """ & formatName(recip.Name, personNameStartChar) & """" & vbCrLf
+            resultString = resultString & "  - """ & EscapeYaml(formatName(recip.Name, personNameStartChar)) & """" & vbCrLf
         Next
 
         ' Add tags
