@@ -40,6 +40,15 @@ vaultPathToSaveFileTo = "C:\Users\YourUsername\Obsidian\Vault\Emails\"
 ```
 Make sure the path ends with a backslash.
 
+## 📦 Bulk / Incremental Export (C# tool)
+
+The VBA macro above saves **one selected email at a time**. For **mass export**
+— a day, week, month, year, the whole folder, or everything *since the last
+export* — see [`csharp/Outlook2ObsidianExport`](csharp/Outlook2ObsidianExport/),
+a small command-line tool that automates classic Outlook via COM. It needs **no
+Azure app registration and no admin rights**, and escapes untrusted email
+content (YAML names, file names, optional body fencing) before writing notes.
+
 ## ⚠️ Limitations
 
 - No Attachment Support: This macro does not currently save or link email attachments.
