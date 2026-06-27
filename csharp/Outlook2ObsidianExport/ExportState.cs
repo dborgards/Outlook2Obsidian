@@ -67,11 +67,15 @@ namespace Outlook2Obsidian.Export
                 lines.Add("LastExport=" + LastExport.Value.ToString("o", CultureInfo.InvariantCulture));
             lines.AddRange(_exportedIds.OrderBy(x => x, StringComparer.OrdinalIgnoreCase));
 
-            // Write atomically: a crash mid-write must not corrupt the watermark.
+            // Write atomically: a crash mid-write must not corrupt or lose the
+            // watermark. File.Replace swaps the file in place on NTFS; File.Move
+            // covers the first-ever write when no destination exists yet.
             string tmp = path + ".tmp";
             File.WriteAllLines(tmp, lines);
-            if (File.Exists(path)) File.Delete(path);
-            File.Move(tmp, path);
+            if (File.Exists(path))
+                File.Replace(tmp, path, null);
+            else
+                File.Move(tmp, path);
         }
     }
 }

@@ -196,9 +196,11 @@ namespace Outlook2Obsidian.Export
             const string prop = "\"urn:schemas:httpmail:datereceived\"";
             var parts = new List<string>();
             if (startLocal != null)
-                parts.Add(prop + " >= '" + startLocal.Value.ToString("yyyy-MM-dd HH:mm") + "'");
+                parts.Add(prop + " >= '" +
+                    startLocal.Value.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) + "'");
             if (endLocal != null)
-                parts.Add(prop + " < '" + endLocal.Value.ToString("yyyy-MM-dd HH:mm") + "'");
+                parts.Add(prop + " < '" +
+                    endLocal.Value.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) + "'");
             return parts.Count == 0 ? null : "@SQL=" + string.Join(" AND ", parts);
         }
 
@@ -230,12 +232,17 @@ namespace Outlook2Obsidian.Export
             {
                 if (part.Length == 0) continue;
                 Outlook.MAPIFolder next = null;
-                foreach (Outlook.MAPIFolder child in current.Folders)
+                Outlook.Folders children = current.Folders;
+                try
                 {
-                    if (string.Equals(child.Name, part, StringComparison.OrdinalIgnoreCase))
-                    { next = child; break; }
-                    Release(child);
+                    foreach (Outlook.MAPIFolder child in children)
+                    {
+                        if (string.Equals(child.Name, part, StringComparison.OrdinalIgnoreCase))
+                        { next = child; break; }
+                        Release(child);
+                    }
                 }
+                finally { Release(children); }
                 if (next == null)
                     throw new InvalidOperationException("Folder not found: '" + spec + "' (at '" + part + "')");
                 if (!ReferenceEquals(current, next)) Release(current);
@@ -248,9 +255,14 @@ namespace Outlook2Obsidian.Export
         {
             yield return root;
             if (!recurse) yield break;
-            foreach (Outlook.MAPIFolder child in root.Folders)
-                foreach (var f in EnumerateFolders(child, true))
-                    yield return f;
+            Outlook.Folders children = root.Folders;
+            try
+            {
+                foreach (Outlook.MAPIFolder child in children)
+                    foreach (var f in EnumerateFolders(child, true))
+                        yield return f;
+            }
+            finally { Release(children); }
         }
 
         private static void Release(object com)

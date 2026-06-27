@@ -74,6 +74,12 @@ namespace Outlook2Obsidian.Export
             if (string.IsNullOrWhiteSpace(cfg.VaultPath))
                 throw new InvalidOperationException("VaultPath must be set in the config file.");
 
+            // Require an absolute path. A relative path would silently write notes
+            // next to the exe instead of into the vault.
+            if (!Path.IsPathRooted(cfg.VaultPath))
+                throw new InvalidOperationException(
+                    "VaultPath must be an absolute path, e.g. C:\\Users\\You\\Obsidian\\Vault\\Emails\\.");
+
             // Normalise to a trailing separator so path joins are predictable.
             if (!cfg.VaultPath.EndsWith("\\") && !cfg.VaultPath.EndsWith("/"))
                 cfg.VaultPath += "\\";
